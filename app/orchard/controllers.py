@@ -7,6 +7,7 @@ from flask import Blueprint, request, render_template, send_from_directory, flas
 from flask_login import current_user
 from flask_babel import gettext
 from os.path import dirname, realpath, join
+from urllib.parse import urlparse
 from app.api.models import Urls, Pods
 from app.utils_db import mv_pod
 from app import app, db
@@ -17,6 +18,18 @@ from app.auth.captcha import mk_captcha, check_captcha
 from app.forms import ReportingForm, AnnotationForm, FeedbackForm
 
 dir_path = dirname(dirname(realpath(__file__)))
+
+
+def safe_referrer():
+    """Return request.referrer only if it is same-origin, otherwise fallback to search index."""
+    referrer = request.referrer
+    if referrer:
+        ref_parsed = urlparse(referrer)
+        req_parsed = urlparse(request.host_url)
+        if ref_parsed.netloc == req_parsed.netloc:
+            return referrer
+    return url_for('search.index')
+
 
 # Define the blueprint:
 orchard = Blueprint('orchard', __name__, url_prefix='/orchard')
@@ -103,7 +116,7 @@ def report():
             flash(gettext("Your report has been sent. Thank you!"), "success")
         else:
             flash(gettext("We could not send your report. Please try again later or contact the administrator."), "danger")
-        return redirect(request.referrer or url_for('search.index'))
+        return redirect(safe_referrer())
     return render_template('orchard/report.html', form=form, email=email)
 
 
@@ -122,7 +135,7 @@ def feedback():
             flash(gettext("Your feedback has been sent. Thank you!"), "success")
         else:
             flash(gettext("We could not send your feedback. Please try again later or contact the administrator."), "danger")
-        return redirect(request.referrer or url_for('search.index'))
+        return redirect(safe_referrer())
     return render_template('orchard/feedback.html', form=form, email=email)
 
 
@@ -147,6 +160,6 @@ def annotate():
         db.session.add(u)
         db.session.commit()
         flash(gettext("Your note has been saved. Thank you!"), "success")
-        return redirect(request.referrer or url_for('search.index'))
+        return redirect(safe_referrer())
     else:
         return render_template('orchard/annotate.html', form=form)
