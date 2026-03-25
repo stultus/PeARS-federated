@@ -621,13 +621,13 @@ fieldset.group :focus {
    Mascot image switching (light/dark variants)
    -------------------------------------------------------------------------- */
 
-.mascot-light { display: block; }
-.mascot-dark { display: none; }
+.mascot-light, .logo-light { display: block; }
+.mascot-dark, .logo-dark { display: none; }
 
-@media (prefers-color-scheme: dark) {
-  .mascot-light { display: none; }
-  .mascot-dark { display: block; }
-}
+[data-theme="dark"] .mascot-light,
+[data-theme="dark"] .logo-light { display: none; }
+[data-theme="dark"] .mascot-dark,
+[data-theme="dark"] .logo-dark { display: block; }
 
 /* --------------------------------------------------------------------------
    Admin toolbar

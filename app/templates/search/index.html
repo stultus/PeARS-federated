@@ -12,11 +12,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 <div class="hero-search">
   <!-- Logo -->
   {% if own_brand %}
-    {% if session.get('theme') == 'dark' %}
-      <a href="{{ url_for('search.index')}}"><img class="hero-logo" src="{{url_for('serve_logos', path='logo-dark.png')}}" alt="PeARS"></a>
-    {% else %}
-      <a href="{{ url_for('search.index')}}"><img class="hero-logo" src="{{url_for('serve_logos', path='logo.png')}}" alt="PeARS"></a>
-    {% endif %}
+    <a href="{{ url_for('search.index')}}">
+      <img class="hero-logo logo-light" src="{{url_for('serve_logos', path='logo.png')}}" alt="PeARS">
+      <img class="hero-logo logo-dark" src="{{url_for('serve_logos', path='logo-dark.png')}}" alt="PeARS">
+    </a>
   {% else %}
     <a href="{{ url_for('search.index')}}"><img class="hero-logo" src="{{ url_for('static', filename='images/logo.svg')}}" alt="PeARS"></a>
   {% endif %}
